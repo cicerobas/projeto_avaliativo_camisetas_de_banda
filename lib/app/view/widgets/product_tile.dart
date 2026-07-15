@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projeto_avaliativo_camisetas_de_banda/app/core/extensions.dart';
 import 'package:projeto_avaliativo_camisetas_de_banda/app/data/models/product_model.dart';
 import 'package:projeto_avaliativo_camisetas_de_banda/app/view/widgets/image_placeholder.dart';
 
@@ -36,7 +37,7 @@ class _ProductTileState extends State<ProductTile> {
           style: const TextStyle(fontWeight: .bold, fontSize: 18),
         ),
         subtitle: Text(
-          widget.product.price.toString(),
+          widget.product.price.toStringBRL,
           style: const TextStyle(fontSize: 16, fontWeight: .w500),
         ),
         trailing: widget.product.available

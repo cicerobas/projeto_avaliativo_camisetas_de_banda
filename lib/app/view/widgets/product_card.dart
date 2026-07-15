@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projeto_avaliativo_camisetas_de_banda/app/core/extensions.dart';
 import 'package:projeto_avaliativo_camisetas_de_banda/app/data/models/product_model.dart';
 import 'package:projeto_avaliativo_camisetas_de_banda/app/view/widgets/image_placeholder.dart';
 
@@ -38,7 +39,7 @@ class _ProductCardState extends State<ProductCard> {
               style: const TextStyle(fontSize: 18, fontWeight: .bold),
             ),
             Text(
-              widget.product.price.toString(),
+              widget.product.price.toStringBRL,
               style: const TextStyle(fontSize: 16, fontWeight: .w500),
             ),
             const Spacer(),
