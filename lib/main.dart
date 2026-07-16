@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:projeto_avaliativo_camisetas_de_banda/app/view/pages/home.dart';
+import 'package:projeto_avaliativo_camisetas_de_banda/app/view/pages/products_catalog_page.dart';
 
 void main() {
   runApp(const MainApp());
@@ -10,6 +10,9 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: Home(), debugShowCheckedModeBanner: false);
+    return const MaterialApp(
+      home: ProductsCatalogPage(),
+      debugShowCheckedModeBanner: false,
+    );
   }
 }
