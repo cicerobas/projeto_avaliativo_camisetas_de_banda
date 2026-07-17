@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_avaliativo_camisetas_de_banda/app/core/extensions.dart';
 import 'package:projeto_avaliativo_camisetas_de_banda/app/data/models/product_model.dart';
+import 'package:projeto_avaliativo_camisetas_de_banda/app/view/pages/product_purchase_page.dart';
 import 'package:projeto_avaliativo_camisetas_de_banda/app/view/widgets/image_placeholder.dart';
 
 class ProductCard extends StatefulWidget {
@@ -47,7 +48,11 @@ class _ProductCardState extends State<ProductCard> {
               height: 36,
               child: widget.product.available
                   ? FilledButton(
-                      onPressed: () {},
+                      onPressed: () => Navigator.pushNamed(
+                        context,
+                        ProductPurchasePage.routeName,
+                        arguments: widget.product,
+                      ),
                       style: FilledButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
