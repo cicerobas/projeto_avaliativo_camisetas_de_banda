@@ -6,7 +6,10 @@ class ImagePlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.grey.shade200,
+      decoration: BoxDecoration(
+        borderRadius: .circular(10),
+        color: Colors.grey.shade200,
+      ),
       alignment: Alignment.center,
       child: Icon(
         Icons.image_not_supported_outlined,
