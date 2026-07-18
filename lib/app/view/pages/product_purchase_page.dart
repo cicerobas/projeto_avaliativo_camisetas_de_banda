@@ -15,11 +15,21 @@ class ProductPurchasePage extends StatefulWidget {
 
 class _ProductPurchasePageState extends State<ProductPurchasePage> {
   late final ProductPurchaseViewmodel _viewModel;
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _addressController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _viewModel = ProductPurchaseViewmodel(widget.product);
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _addressController.dispose();
+    super.dispose();
   }
 
   @override
@@ -34,175 +44,225 @@ class _ProductPurchasePageState extends State<ProductPurchasePage> {
       ),
       body: Padding(
         padding: const .all(8),
-        child: Column(
-          crossAxisAlignment: .start,
-          children: [
-            Card(
-              elevation: 5,
-              color: Colors.white,
-              child: SizedBox(
-                height: 200,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const .only(left: 6, top: 6, bottom: 6),
-                        child: Image.asset(
-                          _viewModel.productImagePath,
-                          errorBuilder: (_, _, _) => const ImagePlaceholder(),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: .start,
+            children: [
+              Card(
+                elevation: 5,
+                color: Colors.white,
+                child: SizedBox(
+                  height: 200,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const .only(left: 6, top: 6, bottom: 6),
+                          child: Image.asset(
+                            _viewModel.productImagePath,
+                            errorBuilder: (_, _, _) => const ImagePlaceholder(),
+                          ),
                         ),
                       ),
+                      const VerticalDivider(width: 13),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: .start,
+                          mainAxisAlignment: .spaceEvenly,
+                          children: [
+                            Text.rich(
+                              TextSpan(
+                                text: "Camisa selecionada:\n",
+                                style: smallGreyLabelStyle,
+                                children: [
+                                  TextSpan(
+                                    text: _viewModel.productName,
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: .w500,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Text.rich(
+                              TextSpan(
+                                text: "Preço:\n",
+                                style: smallGreyLabelStyle,
+                                children: [
+                                  TextSpan(
+                                    text: _viewModel.productPrice.toStringBRL,
+                                    style: const TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: .bold,
+                                      color: Colors.green,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const Divider(),
+              Text("Tamanho:", style: smallGreyLabelStyle),
+              SingleChildScrollView(
+                scrollDirection: .horizontal,
+                child: Row(
+                  mainAxisAlignment: .start,
+                  spacing: 8,
+                  children: List.generate(
+                    growable: false,
+                    _viewModel.productAvailableSizes.length,
+                    (index) {
+                      String size = _viewModel.productAvailableSizes[index];
+                      return ChoiceChip(
+                        label: Text(size),
+                        labelStyle: const TextStyle(fontWeight: .bold),
+                        selected: size == _viewModel.selectedSize,
+                        onSelected: (selected) {
+                          if (selected) {
+                            setState(() {
+                              _viewModel.setSelectedSize(size);
+                            });
+                          }
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text("Quantidade:", style: smallGreyLabelStyle),
+              Container(
+                decoration: BoxDecoration(
+                  border: .all(color: Colors.grey.shade400),
+                  borderRadius: .circular(8),
+                ),
+                child: Row(
+                  mainAxisSize: .min,
+                  spacing: 4,
+                  children: [
+                    IconButton(
+                      onPressed: _viewModel.selectedQuantity > 1
+                          ? () => setState(() {
+                              _viewModel.decrementQuantity();
+                            })
+                          : null,
+                      visualDensity: .compact,
+                      icon: const Icon(Icons.remove),
                     ),
-                    const VerticalDivider(width: 13),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: .start,
-                        mainAxisAlignment: .spaceEvenly,
-                        children: [
-                          Text.rich(
-                            TextSpan(
-                              text: "Camisa selecionada:\n",
-                              style: smallGreyLabelStyle,
-                              children: [
-                                TextSpan(
-                                  text: _viewModel.productName,
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: .w500,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Text.rich(
-                            TextSpan(
-                              text: "Preço:\n",
-                              style: smallGreyLabelStyle,
-                              children: [
-                                TextSpan(
-                                  text: _viewModel.productPrice.toStringBRL,
-                                  style: const TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: .bold,
-                                    color: Colors.green,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                    SizedBox(
+                      width: 32,
+                      child: Text(
+                        "${_viewModel.selectedQuantity}",
+                        textAlign: .center,
+                        style: const TextStyle(fontSize: 20, fontWeight: .bold),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: _viewModel.selectedQuantity < 5
+                          ? () => setState(() {
+                              _viewModel.incrementQuantity();
+                            })
+                          : null,
+                      visualDensity: .compact,
+                      icon: const Icon(Icons.add),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text("Parcelas:", style: smallGreyLabelStyle),
+              DropdownMenu(
+                selectOnly: true,
+                expandedInsets: .zero,
+                inputDecorationTheme: InputDecorationTheme(
+                  border: OutlineInputBorder(borderRadius: .circular(8)),
+                  visualDensity: .compact,
+                ),
+                textStyle: const TextStyle(fontWeight: .w500, fontSize: 18),
+                initialSelection: 1,
+                dropdownMenuEntries: _viewModel
+                    .getInstallmentOptions()
+                    .entries
+                    .map(
+                      (entry) => DropdownMenuEntry(
+                        value: entry.key,
+                        label: entry.value,
+                        style: MenuItemButton.styleFrom(
+                          textStyle: const TextStyle(
+                            fontWeight: .w500,
+                            fontSize: 18,
+                          ), // item da lista
+                        ),
+                      ),
+                    )
+                    .toList(),
+                leadingIcon: const Icon(Icons.monetization_on_outlined),
+                onSelected: (value) {
+                  if (value != _viewModel.selectedInstallments) {
+                    setState(() {
+                      _viewModel.setSelectedInstallments(value!);
+                    });
+                  }
+                },
+              ),
+              const Divider(),
+              Form(
+                key: _formKey,
+                child: Column(
+                  spacing: 10,
+                  children: [
+                    const Text(
+                      "Dados do Comprador",
+                      style: TextStyle(fontWeight: .w500, fontSize: 20),
+                      textAlign: .center,
+                    ),
+                    TextFormField(
+                      controller: _nameController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Preencha este campo.';
+                        }
+                        if (value.trim().length < 4) {
+                          return 'Tamanho minimo: 4 caracteres.';
+                        }
+                        return null;
+                      },
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        visualDensity: .compact,
+                        labelText: "Nome",
+                      ),
+                    ),
+                    TextFormField(
+                      controller: _addressController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Preencha este campo.';
+                        }
+                        if (value.trim().length < 4) {
+                          return 'Tamanho minimo: 4 caracteres.';
+                        }
+                        return null;
+                      },
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        visualDensity: .compact,
+                        labelText: "Endereço",
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
-            const Divider(),
-            Text("Tamanho:", style: smallGreyLabelStyle),
-            SingleChildScrollView(
-              scrollDirection: .horizontal,
-              child: Row(
-                mainAxisAlignment: .start,
-                spacing: 8,
-                children: List.generate(
-                  growable: false,
-                  _viewModel.productAvailableSizes.length,
-                  (index) {
-                    String size = _viewModel.productAvailableSizes[index];
-                    return ChoiceChip(
-                      label: Text(size),
-                      labelStyle: const TextStyle(fontWeight: .bold),
-                      selected: size == _viewModel.selectedSize,
-                      onSelected: (selected) {
-                        if (selected) {
-                          setState(() {
-                            _viewModel.setSelectedSize(size);
-                          });
-                        }
-                      },
-                    );
-                  },
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
-            Text("Quantidade:", style: smallGreyLabelStyle),
-            Container(
-              decoration: BoxDecoration(
-                border: .all(color: Colors.grey.shade400),
-                borderRadius: .circular(8),
-              ),
-              child: Row(
-                mainAxisSize: .min,
-                spacing: 4,
-                children: [
-                  IconButton(
-                    onPressed: _viewModel.selectedQuantity > 1
-                        ? () => setState(() {
-                            _viewModel.decrementQuantity();
-                          })
-                        : null,
-                    visualDensity: .compact,
-                    icon: const Icon(Icons.remove),
-                  ),
-                  SizedBox(
-                    width: 32,
-                    child: Text(
-                      "${_viewModel.selectedQuantity}",
-                      textAlign: .center,
-                      style: const TextStyle(fontSize: 20, fontWeight: .bold),
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: _viewModel.selectedQuantity < 5
-                        ? () => setState(() {
-                            _viewModel.incrementQuantity();
-                          })
-                        : null,
-                    visualDensity: .compact,
-                    icon: const Icon(Icons.add),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 10),
-            Text("Parcelas:", style: smallGreyLabelStyle),
-            DropdownMenu(
-              selectOnly: true,
-              expandedInsets: .zero,
-              inputDecorationTheme: InputDecorationTheme(
-                border: OutlineInputBorder(borderRadius: .circular(8)),
-                visualDensity: .compact,
-              ),
-              textStyle: const TextStyle(fontWeight: .w500, fontSize: 18),
-              initialSelection: 1,
-              dropdownMenuEntries: _viewModel
-                  .getInstallmentOptions()
-                  .entries
-                  .map(
-                    (entry) => DropdownMenuEntry(
-                      value: entry.key,
-                      label: entry.value,
-                      style: MenuItemButton.styleFrom(
-                        textStyle: const TextStyle(
-                          fontWeight: .w500,
-                          fontSize: 18,
-                        ), // item da lista
-                      ),
-                    ),
-                  )
-                  .toList(),
-              leadingIcon: const Icon(Icons.monetization_on_outlined),
-              onSelected: (value) {
-                if (value != _viewModel.selectedInstallments) {
-                  setState(() {
-                    _viewModel.setSelectedInstallments(value!);
-                  });
-                }
-              },
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
