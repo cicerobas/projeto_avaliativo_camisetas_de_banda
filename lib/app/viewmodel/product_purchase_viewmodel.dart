@@ -7,13 +7,23 @@ class ProductPurchaseViewmodel {
     selectedSize = _product.sizes.isNotEmpty ? _product.sizes.first : null;
   }
 
-  String? selectedSize;
   String get productName => _product.title;
   double get productPrice => _product.price;
   List<String> get productAvailableSizes => _product.sizes;
   String get productImagePath => _product.imagePath;
 
+  String? selectedSize;
+  int selectedQuantity = 1;
+
   void selectSize(String size) {
     selectedSize = size;
+  }
+
+  void incrementQuantity() {
+    selectedQuantity++;
+  }
+
+  void decrementQuantity() {
+    selectedQuantity--;
   }
 }

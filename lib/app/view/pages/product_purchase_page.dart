@@ -126,6 +126,46 @@ class _ProductPurchasePageState extends State<ProductPurchasePage> {
                 ),
               ),
             ),
+            const SizedBox(height: 10),
+            Text("Quantidade:", style: smallGreyLabelStyle),
+            Container(
+              decoration: BoxDecoration(
+                border: .all(color: Colors.grey.shade400),
+                borderRadius: .circular(8),
+              ),
+              child: Row(
+                mainAxisSize: .min,
+                spacing: 4,
+                children: [
+                  IconButton(
+                    onPressed: _viewModel.selectedQuantity > 1
+                        ? () => setState(() {
+                            _viewModel.decrementQuantity();
+                          })
+                        : null,
+                    visualDensity: .compact,
+                    icon: const Icon(Icons.remove),
+                  ),
+                  SizedBox(
+                    width: 32,
+                    child: Text(
+                      "${_viewModel.selectedQuantity}",
+                      textAlign: .center,
+                      style: const TextStyle(fontSize: 20, fontWeight: .bold),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: _viewModel.selectedQuantity < 5
+                        ? () => setState(() {
+                            _viewModel.incrementQuantity();
+                          })
+                        : null,
+                    visualDensity: .compact,
+                    icon: const Icon(Icons.add),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
