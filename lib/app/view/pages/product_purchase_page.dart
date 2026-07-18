@@ -117,7 +117,7 @@ class _ProductPurchasePageState extends State<ProductPurchasePage> {
                       onSelected: (selected) {
                         if (selected) {
                           setState(() {
-                            _viewModel.selectSize(size);
+                            _viewModel.setSelectedSize(size);
                           });
                         }
                       },
@@ -165,6 +165,42 @@ class _ProductPurchasePageState extends State<ProductPurchasePage> {
                   ),
                 ],
               ),
+            ),
+            const SizedBox(height: 10),
+            Text("Parcelas:", style: smallGreyLabelStyle),
+            DropdownMenu(
+              selectOnly: true,
+              expandedInsets: .zero,
+              inputDecorationTheme: InputDecorationTheme(
+                border: OutlineInputBorder(borderRadius: .circular(8)),
+                visualDensity: .compact,
+              ),
+              textStyle: const TextStyle(fontWeight: .w500, fontSize: 18),
+              initialSelection: 1,
+              dropdownMenuEntries: _viewModel
+                  .getInstallmentOptions()
+                  .entries
+                  .map(
+                    (entry) => DropdownMenuEntry(
+                      value: entry.key,
+                      label: entry.value,
+                      style: MenuItemButton.styleFrom(
+                        textStyle: const TextStyle(
+                          fontWeight: .w500,
+                          fontSize: 18,
+                        ), // item da lista
+                      ),
+                    ),
+                  )
+                  .toList(),
+              leadingIcon: const Icon(Icons.monetization_on_outlined),
+              onSelected: (value) {
+                if (value != _viewModel.selectedInstallments) {
+                  setState(() {
+                    _viewModel.setSelectedInstallments(value!);
+                  });
+                }
+              },
             ),
           ],
         ),
