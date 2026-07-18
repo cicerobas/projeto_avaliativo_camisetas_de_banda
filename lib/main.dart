@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:projeto_avaliativo_camisetas_de_banda/app/data/models/product_model.dart';
 import 'package:projeto_avaliativo_camisetas_de_banda/app/view/pages/product_purchase_page.dart';
 import 'package:projeto_avaliativo_camisetas_de_banda/app/view/pages/products_catalog_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
   runApp(const MainApp());
 }
 
