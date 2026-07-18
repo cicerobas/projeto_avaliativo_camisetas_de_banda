@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:projeto_avaliativo_camisetas_de_banda/app/core/extensions.dart';
 import 'package:projeto_avaliativo_camisetas_de_banda/app/data/models/product_model.dart';
 import 'package:projeto_avaliativo_camisetas_de_banda/app/view/widgets/image_placeholder.dart';
+import 'package:projeto_avaliativo_camisetas_de_banda/app/viewmodel/product_purchase_viewmodel.dart';
 
 class ProductPurchasePage extends StatefulWidget {
   static const routeName = "/purchase";
@@ -13,6 +14,14 @@ class ProductPurchasePage extends StatefulWidget {
 }
 
 class _ProductPurchasePageState extends State<ProductPurchasePage> {
+  late final ProductPurchaseViewmodel _viewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _viewModel = ProductPurchaseViewmodel(widget.product);
+  }
+
   @override
   Widget build(BuildContext context) {
     final smallGreyLabelStyle = TextStyle(
@@ -39,7 +48,7 @@ class _ProductPurchasePageState extends State<ProductPurchasePage> {
                       child: Padding(
                         padding: const .only(left: 6, top: 6, bottom: 6),
                         child: Image.asset(
-                          widget.product.imagePath,
+                          _viewModel.productImagePath,
                           errorBuilder: (_, _, _) => const ImagePlaceholder(),
                         ),
                       ),
@@ -56,7 +65,7 @@ class _ProductPurchasePageState extends State<ProductPurchasePage> {
                               style: smallGreyLabelStyle,
                               children: [
                                 TextSpan(
-                                  text: widget.product.title,
+                                  text: _viewModel.productName,
                                   style: const TextStyle(
                                     fontSize: 20,
                                     fontWeight: .w500,
@@ -72,7 +81,7 @@ class _ProductPurchasePageState extends State<ProductPurchasePage> {
                               style: smallGreyLabelStyle,
                               children: [
                                 TextSpan(
-                                  text: widget.product.price.toStringBRL,
+                                  text: _viewModel.productPrice.toStringBRL,
                                   style: const TextStyle(
                                     fontSize: 22,
                                     fontWeight: .bold,
@@ -86,6 +95,34 @@ class _ProductPurchasePageState extends State<ProductPurchasePage> {
                       ),
                     ),
                   ],
+                ),
+              ),
+            ),
+            const Divider(),
+            Text("Tamanho:", style: smallGreyLabelStyle),
+            SingleChildScrollView(
+              scrollDirection: .horizontal,
+              child: Row(
+                mainAxisAlignment: .start,
+                spacing: 8,
+                children: List.generate(
+                  growable: false,
+                  _viewModel.productAvailableSizes.length,
+                  (index) {
+                    String size = _viewModel.productAvailableSizes[index];
+                    return ChoiceChip(
+                      label: Text(size),
+                      labelStyle: const TextStyle(fontWeight: .bold),
+                      selected: size == _viewModel.selectedSize,
+                      onSelected: (selected) {
+                        if (selected) {
+                          setState(() {
+                            _viewModel.selectSize(size);
+                          });
+                        }
+                      },
+                    );
+                  },
                 ),
               ),
             ),
