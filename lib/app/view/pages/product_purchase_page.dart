@@ -180,6 +180,7 @@ class _ProductPurchasePageState extends State<ProductPurchasePage> {
               const SizedBox(height: 10),
               Text("Parcelas:", style: smallGreyLabelStyle),
               DropdownMenu(
+                key: ValueKey(_viewModel.totalPurchaseValue),
                 selectOnly: true,
                 expandedInsets: .zero,
                 inputDecorationTheme: InputDecorationTheme(
@@ -187,7 +188,7 @@ class _ProductPurchasePageState extends State<ProductPurchasePage> {
                   visualDensity: .compact,
                 ),
                 textStyle: const TextStyle(fontWeight: .w500, fontSize: 18),
-                initialSelection: 1,
+                initialSelection: _viewModel.selectedInstallments,
                 dropdownMenuEntries: _viewModel
                     .getInstallmentOptions()
                     .entries
@@ -259,6 +260,57 @@ class _ProductPurchasePageState extends State<ProductPurchasePage> {
                       ),
                     ),
                   ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const .symmetric(horizontal: 16, vertical: 8),
+        child: SafeArea(
+          top: false,
+          child: Column(
+            mainAxisSize: .min,
+            spacing: 10,
+            children: [
+              Row(
+                mainAxisAlignment: .spaceBetween,
+                children: [
+                  Text(
+                    "Total:",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: .bold,
+                      color: Colors.blue.shade800,
+                    ),
+                  ),
+                  Text(
+                    _viewModel.totalPurchaseValue.toStringBRL,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: .w900,
+                      color: Colors.blue.shade800,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(borderRadius: .circular(8)),
+                    backgroundColor: Colors.blueGrey,
+                  ),
+                  child: const Text(
+                    'Finalizar Compra',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                      fontWeight: .bold,
+                    ),
+                  ),
                 ),
               ),
             ],

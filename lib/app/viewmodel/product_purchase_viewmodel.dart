@@ -6,6 +6,7 @@ class ProductPurchaseViewmodel {
 
   ProductPurchaseViewmodel(this._product) {
     selectedSize = _product.sizes.isNotEmpty ? _product.sizes.first : null;
+    _updateTotalPurchaseValue();
   }
 
   final double _baseInterest = 0.5;
@@ -19,29 +20,41 @@ class ProductPurchaseViewmodel {
   int selectedQuantity = 1;
   int selectedInstallments = 1;
 
+  double totalPurchaseValue = 0.0;
+
   void setSelectedSize(String size) {
     selectedSize = size;
   }
 
   void incrementQuantity() {
     selectedQuantity++;
+    _updateTotalPurchaseValue();
   }
 
   void decrementQuantity() {
     selectedQuantity--;
+    _updateTotalPurchaseValue();
   }
 
   void setSelectedInstallments(int installments) {
     selectedInstallments = installments;
+    _updateTotalPurchaseValue();
+  }
+
+  void _updateTotalPurchaseValue() {
+    totalPurchaseValue =
+        _applyInterest(selectedInstallments) * selectedQuantity;
   }
 
   Map<int, String> getInstallmentOptions() {
-    Map<int, String> installmentOptions = {
-      1: "1x de ${productPrice.toStringBRL} sem juros",
+    final Map<int, String> installmentOptions = {
+      1: "1x de ${(productPrice * selectedQuantity).toStringBRL} sem juros",
     };
     for (var i = 2; i < 7; i++) {
-      final value = _applyInterest(i) / i;
-      installmentOptions[i] = "${i}x de ${value.toStringBRL} com juros";
+      final totalWithInterest = _applyInterest(i) * selectedQuantity;
+      final installmentValue = totalWithInterest / i;
+      installmentOptions[i] =
+          "${i}x de ${installmentValue.toStringBRL} com juros";
     }
     return installmentOptions;
   }
