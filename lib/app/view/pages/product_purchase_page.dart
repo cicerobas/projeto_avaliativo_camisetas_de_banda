@@ -20,6 +20,7 @@ class _ProductPurchasePageState extends State<ProductPurchasePage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _addressController = TextEditingController();
+  bool _processing = false;
 
   @override
   void initState() {
@@ -317,7 +318,7 @@ class _ProductPurchasePageState extends State<ProductPurchasePage> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () => _validateForm(),
+                  onPressed: () => _processing ? null : _validateForm(),
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(borderRadius: .circular(8)),
                     backgroundColor: context.colors.primary,
@@ -364,6 +365,7 @@ class _ProductPurchasePageState extends State<ProductPurchasePage> {
   }
 
   void _processPurchase() {
+    _processing = true;
     _viewModel.processPurchase();
 
     ScaffoldMessenger.of(context)
@@ -384,6 +386,7 @@ class _ProductPurchasePageState extends State<ProductPurchasePage> {
           backgroundColor: Colors.green,
         ),
       ).closed.then((value) {
+        _processing = false;
         if (mounted) {
           Navigator.popUntil(context, ModalRoute.withName("/"));
         }
