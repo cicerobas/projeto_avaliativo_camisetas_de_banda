@@ -1,10 +1,13 @@
 import 'package:projeto_avaliativo_camisetas_de_banda/app/core/extensions.dart';
 import 'package:projeto_avaliativo_camisetas_de_banda/app/data/models/product_model.dart';
+import 'package:projeto_avaliativo_camisetas_de_banda/app/data/models/purchase_model.dart';
+import 'package:projeto_avaliativo_camisetas_de_banda/app/data/repositories/purchase_repository.dart';
 
 class ProductPurchaseViewmodel {
   final ProductModel _product;
+  final PurchaseRepository _repository;
 
-  ProductPurchaseViewmodel(this._product) {
+  ProductPurchaseViewmodel(this._product, this._repository) {
     selectedSize = _product.sizes.isNotEmpty ? _product.sizes.first : null;
     _updateTotalPurchaseValue();
   }
@@ -21,6 +24,9 @@ class ProductPurchaseViewmodel {
   int selectedInstallments = 1;
 
   double totalPurchaseValue = 0.0;
+
+  String customerName = "";
+  String customerAddress = "";
 
   void setSelectedSize(String size) {
     selectedSize = size;
@@ -65,5 +71,24 @@ class ProductPurchaseViewmodel {
     final priceWithInterest = (productPrice * interest) + productPrice;
     final priceInCents = (priceWithInterest * 100).round();
     return priceInCents / 100;
+  }
+
+  void setFormData({required String name, required String address}) {
+    customerName = name.trim();
+    customerAddress = address.trim();
+  }
+
+  void processPurchase() {
+    final purchaseData = PurchaseModel(
+      productName: productName,
+      size: selectedSize!,
+      quantity: selectedQuantity,
+      installments: selectedInstallments,
+      totalValue: totalPurchaseValue,
+      customerName: customerName,
+      customerAddress: customerAddress,
+    );
+
+    _repository.processPurchase(purchaseData);
   }
 }

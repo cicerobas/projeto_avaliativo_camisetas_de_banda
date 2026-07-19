@@ -4,11 +4,11 @@ import 'package:projeto_avaliativo_camisetas_de_banda/app/data/datasource/produc
 import 'package:projeto_avaliativo_camisetas_de_banda/app/data/models/product_model.dart';
 
 class ProductRepository {
-  final ProductRemoteDatasource datasource;
-  ProductRepository(this.datasource);
+  final ProductRemoteDatasource _datasource;
+  ProductRepository(this._datasource);
 
   List<ProductModel> getProducts() {
-    final list = (jsonDecode(datasource.getProducts()) as List)
+    final list = (jsonDecode(_datasource.getProducts()) as List)
         .cast<Map<String, dynamic>>();
     return list.map((item) => ProductModel.fromMap(item)).toList();
   }
