@@ -19,6 +19,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.blueGrey)),
       home: const ProductsCatalogPage(),
       onGenerateRoute: (settings) {
         if (settings.name == ProductPurchasePage.routeName) {
