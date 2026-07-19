@@ -18,11 +18,10 @@ class _ProductCardState extends State<ProductCard> {
     return Card(
       elevation: 5,
       child: Padding(
-        padding: const EdgeInsets.all(4.0),
+        padding: const .all(4),
         child: Column(
           crossAxisAlignment: .stretch,
           mainAxisSize: .min,
-          spacing: 2,
           children: [
             ClipRRect(
               borderRadius: .circular(10),
@@ -55,9 +54,9 @@ class _ProductCardState extends State<ProductCard> {
                       ),
                       style: FilledButton.styleFrom(
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: .circular(8),
                         ),
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        padding: const .symmetric(horizontal: 4),
                         visualDensity: .compact,
                       ),
                       child: const Text('COMPRAR'),

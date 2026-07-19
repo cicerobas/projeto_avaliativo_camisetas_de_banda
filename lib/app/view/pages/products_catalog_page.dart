@@ -93,11 +93,13 @@ class _ProductsCatalogPageState extends State<ProductsCatalogPage> {
             Expanded(
               child: _isGridView
                   ? GridView.builder(
-                      padding: const EdgeInsets.all(8),
+                      padding: const .all(8),
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3,
-                            childAspectRatio: 0.5,
+                            mainAxisExtent: 250,
+                            crossAxisSpacing: 4,
+                            mainAxisSpacing: 4,
                           ),
                       itemCount: _filteredProducts.length,
                       itemBuilder: (context, index) =>
