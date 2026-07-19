@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_avaliativo_camisetas_de_banda/app/core/extensions.dart';
 import 'package:projeto_avaliativo_camisetas_de_banda/app/data/models/product_model.dart';
+import 'package:projeto_avaliativo_camisetas_de_banda/app/data/repositories/purchase_repository.dart';
+import 'package:projeto_avaliativo_camisetas_de_banda/app/data/services/purchase_service.dart';
 import 'package:projeto_avaliativo_camisetas_de_banda/app/view/widgets/image_placeholder.dart';
 import 'package:projeto_avaliativo_camisetas_de_banda/app/viewmodel/product_purchase_viewmodel.dart';
 
@@ -22,7 +24,10 @@ class _ProductPurchasePageState extends State<ProductPurchasePage> {
   @override
   void initState() {
     super.initState();
-    _viewModel = ProductPurchaseViewmodel(widget.product);
+    _viewModel = ProductPurchaseViewmodel(
+      widget.product,
+      PurchaseRepository(PurchaseService()),
+    );
   }
 
   @override
@@ -200,7 +205,7 @@ class _ProductPurchasePageState extends State<ProductPurchasePage> {
                           textStyle: const TextStyle(
                             fontWeight: .w500,
                             fontSize: 18,
-                          ), // item da lista
+                          ),
                         ),
                       ),
                     )
@@ -227,6 +232,7 @@ class _ProductPurchasePageState extends State<ProductPurchasePage> {
                     ),
                     TextFormField(
                       controller: _nameController,
+                      onTapOutside: (event) => FocusScope.of(context).unfocus(),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Preencha este campo.';
@@ -244,6 +250,7 @@ class _ProductPurchasePageState extends State<ProductPurchasePage> {
                     ),
                     TextFormField(
                       controller: _addressController,
+                      onTapOutside: (event) => FocusScope.of(context).unfocus(),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Preencha este campo.';
@@ -298,7 +305,7 @@ class _ProductPurchasePageState extends State<ProductPurchasePage> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () => _validateForm(),
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(borderRadius: .circular(8)),
                     backgroundColor: Colors.blueGrey,
@@ -318,5 +325,56 @@ class _ProductPurchasePageState extends State<ProductPurchasePage> {
         ),
       ),
     );
+  }
+
+  void _validateForm() {
+    if (_formKey.currentState!.validate()) {
+      _viewModel.setFormData(
+        name: _nameController.text,
+        address: _addressController.text,
+      );
+      _processPurchase();
+      return;
+    }
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: const Text(
+            'Dados inválidos! Corrija os campos indicados.',
+            style: TextStyle(fontWeight: .bold),
+          ),
+          behavior: .floating,
+          showCloseIcon: true,
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
+  }
+
+  void _processPurchase() {
+    _viewModel.processPurchase();
+
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          action: SnackBarAction(
+            label: "OK",
+            textColor: Colors.white,
+            onPressed: () {},
+          ),
+          persist: false,
+          content: const Text(
+            'Compra realizada com sucesso',
+            style: TextStyle(fontWeight: .bold, fontSize: 18),
+          ),
+          behavior: .floating,
+          backgroundColor: Colors.green,
+        ),
+      ).closed.then((value) {
+        if (mounted) {
+          Navigator.popUntil(context, ModalRoute.withName("/"));
+        }
+      });
   }
 }
