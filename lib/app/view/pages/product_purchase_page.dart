@@ -41,11 +41,13 @@ class _ProductPurchasePageState extends State<ProductPurchasePage> {
   Widget build(BuildContext context) {
     final smallGreyLabelStyle = TextStyle(
       fontSize: 16,
-      color: Colors.grey.shade800,
+      color: context.colors.onSurface,
     );
     return Scaffold(
       appBar: AppBar(
         title: const Text("Comprar", style: TextStyle(fontWeight: .bold)),
+        backgroundColor: context.colors.primary,
+        foregroundColor: context.colors.onPrimary,
       ),
       body: Padding(
         padding: const .all(8),
@@ -273,8 +275,18 @@ class _ProductPurchasePageState extends State<ProductPurchasePage> {
           ),
         ),
       ),
-      bottomNavigationBar: Padding(
+      bottomNavigationBar: Container(
         padding: const .symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.2),
+              blurRadius: 12,
+              offset: const Offset(0, -4),
+            ),
+          ],
+        ),
         child: SafeArea(
           top: false,
           child: Column(
@@ -308,13 +320,13 @@ class _ProductPurchasePageState extends State<ProductPurchasePage> {
                   onPressed: () => _validateForm(),
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(borderRadius: .circular(8)),
-                    backgroundColor: Colors.blueGrey,
+                    backgroundColor: context.colors.primary,
                   ),
-                  child: const Text(
+                  child: Text(
                     'Finalizar Compra',
                     style: TextStyle(
                       fontSize: 20,
-                      color: Colors.white,
+                      color: context.colors.onPrimary,
                       fontWeight: .bold,
                     ),
                   ),
@@ -346,7 +358,7 @@ class _ProductPurchasePageState extends State<ProductPurchasePage> {
           ),
           behavior: .floating,
           showCloseIcon: true,
-          backgroundColor: Theme.of(context).colorScheme.error,
+          backgroundColor: context.colors.error,
         ),
       );
   }

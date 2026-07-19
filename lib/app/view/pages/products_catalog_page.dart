@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:projeto_avaliativo_camisetas_de_banda/app/core/extensions.dart';
 import 'package:projeto_avaliativo_camisetas_de_banda/app/data/datasource/product_remote_datasource.dart';
 import 'package:projeto_avaliativo_camisetas_de_banda/app/data/models/product_model.dart';
@@ -33,86 +34,147 @@ class _ProductsCatalogPageState extends State<ProductsCatalogPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Catálogo", style: TextStyle(fontWeight: .bold)),
-          actions: [
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  _isGridView = !_isGridView;
-                });
-              },
-              icon: Icon(_isGridView ? Icons.view_list : Icons.grid_view_sharp),
-            ),
-          ],
-        ),
-        body: Column(
-          children: [
-            Padding(
-              padding: const .symmetric(vertical: 8, horizontal: 12),
-              child: TextField(
-                decoration: const InputDecoration(
-                  border: ShapedInputBorder(shape: StadiumBorder()),
-                  suffixIcon: Icon(Icons.search),
-                  visualDensity: .compact,
-                  hintText: "Buscar...",
-                ),
-                onChanged: (value) {
-                  _searchQuery = value;
-                  _filterProducts();
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            pinned: true,
+            floating: true,
+            snap: true,
+            elevation: 5,
+            expandedHeight: 200,
+            backgroundColor: context.colors.primary,
+            foregroundColor: context.colors.onPrimary,
+            title: const Text("Catálogo", style: TextStyle(fontWeight: .bold)),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    _isGridView = !_isGridView;
+                  });
                 },
+                icon: Icon(
+                  _isGridView ? Icons.view_list : Icons.grid_view_sharp,
+                ),
               ),
+            ],
+            systemOverlayStyle: const SystemUiOverlayStyle(
+              systemNavigationBarIconBrightness: .dark,
             ),
-            Padding(
-              padding: const .symmetric(vertical: 8, horizontal: 12),
-              child: Row(
-                mainAxisAlignment: .spaceBetween,
-                children: [
-                  const Text("Preço:", style: TextStyle(fontSize: 16)),
-                  Expanded(
-                    child: RangeSlider(
-                      values: _currentRange,
-                      min: _priceRange.start,
-                      max: _priceRange.end,
-                      divisions: 20,
-                      labels: RangeLabels(
-                        _currentRange.start.toStringBRL,
-                        _currentRange.end.toStringBRL,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Padding(
+                padding: const .symmetric(horizontal: 12),
+                child: Column(
+                  mainAxisAlignment: .end,
+                  children: [
+                    TextField(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderSide: .none,
+                          borderRadius: .circular(30),
+                        ),
+                        suffixIcon: Icon(
+                          Icons.search,
+                          color: context.colors.primary,
+                        ),
+                        visualDensity: .compact,
+                        hintText: "Buscar...",
+                        hintStyle: TextStyle(
+                          color: context.colors.onSurface.withValues(
+                            alpha: 0.5,
+                          ),
+                        ),
+                        filled: true,
+                        fillColor: context.colors.surface,
                       ),
-                      onChanged: (range) {
-                        _currentRange = range;
+                      style: TextStyle(color: context.colors.onSurface),
+                      onChanged: (value) {
+                        _searchQuery = value;
                         _filterProducts();
                       },
+                      onTapOutside: (event) => FocusScope.of(context).unfocus(),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 10),
+                    Column(
+                      crossAxisAlignment: .start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: .spaceBetween,
+                          children: [
+                            Text(
+                              "Faixa de Preço:",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: context.colors.onPrimary,
+                                fontWeight: .bold,
+                              ),
+                            ),
+                            Text(
+                              "${_currentRange.start.toStringBRL}  -  ${_currentRange.end.toStringBRL}",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: context.colors.onPrimary,
+                                fontWeight: .bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SliderTheme(
+                          data: SliderTheme.of(context).copyWith(
+                            activeTrackColor: context.colors.onPrimary,
+                            thumbColor: context.colors.onPrimary,
+                            inactiveTrackColor: context.colors.onPrimary
+                                .withValues(alpha: 0.5),
+                            overlayColor: context.colors.onPrimary.withValues(
+                              alpha: 0.1,
+                            ),
+                          ),
+                          child: RangeSlider(
+                            values: _currentRange,
+                            min: _priceRange.start,
+                            max: _priceRange.end,
+                            divisions: 20,
+                            onChanged: (RangeValues range) {
+                              setState(() {
+                                _currentRange = range;
+                              });
+                            },
+                            onChangeEnd: (RangeValues range) {
+                              _filterProducts();
+                              FocusScope.of(context).unfocus();
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-            Expanded(
-              child: _isGridView
-                  ? GridView.builder(
-                      padding: const .all(8),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            mainAxisExtent: 250,
-                            crossAxisSpacing: 4,
-                            mainAxisSpacing: 4,
-                          ),
-                      itemCount: _filteredProducts.length,
-                      itemBuilder: (context, index) =>
-                          ProductCard(_filteredProducts[index]),
-                    )
-                  : ListView.builder(
-                      itemCount: _filteredProducts.length,
-                      itemBuilder: (context, index) =>
-                          ProductTile(_filteredProducts[index]),
-                    ),
-            ),
-          ],
-        ),
+          ),
+          SliverPadding(
+            padding: const .symmetric(vertical: 8, horizontal: 12),
+            sliver: _isGridView
+                ? SliverGrid.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          mainAxisExtent: 250,
+                          crossAxisSpacing: 4,
+                          mainAxisSpacing: 4,
+                        ),
+                    itemCount: _filteredProducts.length,
+                    itemBuilder: (context, index) =>
+                        ProductCard(_filteredProducts[index]),
+                  )
+                : SliverList.builder(
+                    itemCount: _filteredProducts.length,
+                    itemBuilder: (context, index) =>
+                        ProductTile(_filteredProducts[index]),
+                  ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 50)),
+        ],
       ),
     );
   }
