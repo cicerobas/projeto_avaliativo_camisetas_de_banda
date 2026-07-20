@@ -8,6 +8,8 @@ Um aplicativo desenvolvido em Flutter para listagem, filtragem e simulação de 
 ---
 ## 📸 Demonstração
 
+Vídeo: https://drive.google.com/file/d/1AIkylSLB00HT9BOWGEgUfuXZyVUPAkGx/view?usp=drive_link
+
 | Tela 1: Catálogo (Grade) | Tela 1: Catálogo (Lista) |
 | :---: | :---: |
 | <img src="assets/screenshots/t1_grid.png" width="280" alt="Catálogo em Grade" /> | <img src="assets/screenshots/t1_list.png" width="280" alt="Catálogo em Lista" /> |
